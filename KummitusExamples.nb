@@ -1,0 +1,261 @@
+(* Content-type: application/vnd.wolfram.mathematica *)
+
+(*** Wolfram Notebook File ***)
+(* http://www.wolfram.com/nb *)
+
+(* CreatedBy='Mathematica 14.0' *)
+
+(*CacheID: 234*)
+(* Internal cache information:
+NotebookFileLineBreakTest
+NotebookFileLineBreakTest
+NotebookDataPosition[       158,          7]
+NotebookDataLength[     10313,        251]
+NotebookOptionsPosition[      6748,        194]
+NotebookOutlinePosition[      7148,        210]
+CellTagsIndexPosition[      7105,        207]
+WindowFrame->Normal*)
+
+(* Beginning of Notebook Content *)
+Notebook[{
+
+Cell[CellGroupData[{
+Cell["\<\
+Notes on consistent model building in (perturbative) QFT: Kummitus examples\
+\>", "Title",ExpressionUUID->"aecaf734-685e-49dd-b498-88810590e1cf"],
+
+Cell["\<\
+The Kummitus examples of the slides: a generic vector field, and the two \
+theories obtained by removing one of its sectors. Run the cells in order. The \
+package is loaded from the folder KummitusV2 next to this notebook.\
+\>", "Text",ExpressionUUID->"64d3f5f5-1159-4771-9c7a-b66225405c30"],
+
+Cell[CellGroupData[{
+
+Cell["Setup", "Section",ExpressionUUID->"6030daa0-3160-4ff5-a4ab-48dea7f9cdb1"],
+
+Cell["\<\
+Get[FileNameJoin[{NotebookDirectory[], \"../KummitusV2\", \"Kummitus.wl\"}]];\
+\
+\>", "Input",
+ CellChangeTimes->{{4.002008095838368*^9, 4.002008096744763*^9}},
+ CellLabel->"In[2]:=",ExpressionUUID->"a367c976-9f1c-49c3-a4d8-ba90e0939cb8"],
+
+Cell["\<\
+Free parameters of the Lagrangians are declared as constants, in a separate \
+cell after loading the package.\
+\>", "Text",ExpressionUUID->"5c9d7ae5-9e3e-4f7c-a480-1a498baaf1a5"],
+
+Cell["ConstantSymbols /@ {k1, k2, m1};", "Input",
+ CellLabel->"In[3]:=",ExpressionUUID->"e3ecbcf9-726b-4249-ba00-291fd1e85c21"],
+
+Cell["\<\
+Single letters a, b, ..., t (except g and q) are tensor indices: use longer \
+names for your own variables.\
+\>", "Text",ExpressionUUID->"9206af87-9541-4f0e-ae3f-79de1135dbb1"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["1. A generic vector field", "Section",ExpressionUUID->"a2ab882c-a460-4098-9e1a-5e89f7190ba3"],
+
+Cell["\<\
+The most general quadratic Lagrangian of a vector, with no gauge symmetry: \
+everything propagates. Expected: a spin-1 sector a(1-) = 2(m1 + k1 q^2) and a \
+spin-0 sector a(0+) = 2(m1 + (k1 + k2) q^2).\
+\>", "Text",ExpressionUUID->"d24226b2-f1b0-4bb2-81c7-381bb2bef601"],
+
+Cell["\<\
+model = k1 dd[-a][V[-b]] dd[a][V[b]] + k2 dd[-a][V[a]] dd[-b][V[b]] + m1 \
+V[-a] V[a];
+SourceDeclare[model];
+CompSatProp[model];\
+\>", "Input",
+ CellLabel->"In[4]:=",ExpressionUUID->"f03baf28-14a9-414e-ae74-f7395c17351f"],
+
+Cell["MatrixForm /@ matricesOutput", "Input",
+ CellLabel->"In[7]:=",ExpressionUUID->"aa5185da-deed-49d7-8218-2944b9893276"],
+
+Cell["masses", "Input",
+ CellLabel->"In[8]:=",ExpressionUUID->"800d866f-2806-4d30-a598-de5c728e7d24"],
+
+Cell["ComputeMassiveStates[]", "Input",
+ CellLabel->"In[9]:=",ExpressionUUID->"33421481-57a8-420b-a892-6d2ce087c20e"],
+
+Cell["\<\
+Two poles: p^2 = -m1/k1 (spin 1, three states) and p^2 = -m1/(k1 + k2) (spin \
+0, one state). Can both have a positive mass squared and positive residues?\
+\>", "Text",ExpressionUUID->"ee73fcb1-5af9-47a4-8208-96e873b728a6"],
+
+Cell["\<\
+healthy = Join[(#[[1]] > 0) & /@ massiveData, \
+Thread[Flatten[massiveData[[All, 2]]] > 0]];
+Reduce[healthy, {k1, k2, m1}, Reals]\
+\>", "Input",
+ CellLabel->"In[10]:=",ExpressionUUID->"17dcb6e9-acd5-4852-a464-a8c0a6729da0"],
+
+Cell[BoxData["healthy"], "Input",
+ CellChangeTimes->{{4.0020081926192293`*^9, 4.0020081938258953`*^9}},
+ CellLabel->"In[12]:=",ExpressionUUID->"d2e6a0c5-5505-4011-b511-bf0f72531b85"],
+
+Cell[BoxData[
+ RowBox[{"Reduce", "[", 
+  RowBox[{
+   RowBox[{"Drop", "[", 
+    RowBox[{"healthy", ",", 
+     RowBox[{"-", "1"}]}], "]"}], ",", " ", 
+   RowBox[{"{", 
+    RowBox[{"k1", ",", " ", "k2", ",", " ", "m1"}], "}"}], ",", " ", 
+   "Reals"}], "]"}]], "Input",
+ CellChangeTimes->{{4.0020082031556787`*^9, 4.0020082124260178`*^9}},
+ CellLabel->"In[13]:=",ExpressionUUID->"24f8801a-de1c-4edb-ac8e-d6d4459843c1"],
+
+Cell["\<\
+False: no choice of k1, k2, m1 makes both sectors healthy. Without tachyons, \
+the two residues have opposite signs.\
+\>", "Text",ExpressionUUID->"fc7cffa2-a405-4f9c-8063-1ba54ac3243d"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["2. Removing the spin-0 sector: Proca", "Section",ExpressionUUID->"e3c13ec7-d490-47eb-9e8c-4de74e90089f"],
+
+Cell["\<\
+Choose k2 = -k1: the spin-0 operator loses its q^2 and has no pole.\
+\>", "Text",ExpressionUUID->"63fa8332-7ebc-4410-a6af-2dc996a561ef"],
+
+Cell["\<\
+model = k1 (dd[-a][V[-b]] dd[a][V[b]] - dd[-a][V[a]] dd[-b][V[b]]) + m1 V[-a] \
+V[a];
+SourceDeclare[model];
+CompSatProp[model];\
+\>", "Input",
+ CellLabel->"In[14]:=",ExpressionUUID->"c8087ace-13e5-449d-b1ac-86a7c870d278"],
+
+Cell["MatrixForm /@ matricesOutput", "Input",
+ CellLabel->"In[17]:=",ExpressionUUID->"17455c4f-3751-4454-9e9b-3dcd0ef455da"],
+
+Cell["masses", "Input",
+ CellLabel->"In[18]:=",ExpressionUUID->"0896f5bf-12d8-4d36-b88a-5d7242625c76"],
+
+Cell["ComputeMassiveStates[]", "Input",
+ CellLabel->"In[19]:=",ExpressionUUID->"c68f46d7-fa27-4e22-9ca6-300fa1f1f8df"],
+
+Cell["\<\
+healthy = Join[(#[[1]] > 0) & /@ massiveData, \
+Thread[Flatten[massiveData[[All, 2]]] > 0]];
+Reduce[healthy, {k1, k2, m1}, Reals]\
+\>", "Input",
+ CellLabel->"In[20]:=",ExpressionUUID->"dab18b25-c35d-408b-82d2-322bf79bbee7"],
+
+Cell["\<\
+One pole, three states with residues of the same sign: healthy for k1 < 0, m1 \
+> 0.\
+\>", "Text",ExpressionUUID->"c1718b18-f26c-46af-b572-6d4c4da45916"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["3. Removing the spin-1 sector", "Section",ExpressionUUID->"8295681f-a262-4f70-bd1e-dd758642f49a"],
+
+Cell["\<\
+Choose k1 = 0: the spin-1 operator loses its q^2 and has no pole.\
+\>", "Text",ExpressionUUID->"818f294b-7e9d-46c1-9fd9-2cf6da79a70d"],
+
+Cell["\<\
+model = k2 dd[-a][V[a]] dd[-b][V[b]] + m1 V[-a] V[a];
+SourceDeclare[model];
+CompSatProp[model];\
+\>", "Input",
+ CellLabel->"In[22]:=",ExpressionUUID->"8d00b324-dae5-46f7-837e-00caba32fd5c"],
+
+Cell["MatrixForm /@ matricesOutput", "Input",
+ CellLabel->"In[25]:=",ExpressionUUID->"be2e811b-d060-4a51-83f1-c8a693b001d8"],
+
+Cell["masses", "Input",
+ CellLabel->"In[26]:=",ExpressionUUID->"93ffb22a-68c9-4ad7-ba77-f97b77b752c8"],
+
+Cell["ComputeMassiveStates[]", "Input",
+ CellLabel->"In[27]:=",ExpressionUUID->"ce3fb7ea-197a-44c6-a578-93d20f879dd8"],
+
+Cell["\<\
+healthy = Join[(#[[1]] > 0) & /@ massiveData, \
+Thread[Flatten[massiveData[[All, 2]]] > 0]];
+Reduce[healthy, {k1, k2, m1}, Reals]\
+\>", "Input",
+ CellLabel->"In[28]:=",ExpressionUUID->"d1f87869-0848-4049-b4c8-81421a52bea7"],
+
+Cell["\<\
+One pole, one state: a healthy massive spin 0, carried by a vector field, for \
+k2 > 0, m1 < 0.\
+\>", "Text",ExpressionUUID->"02241079-db9f-43b5-b275-b00ccafd1e98"]
+}, Open  ]]
+}, Open  ]]
+},
+WindowSize->{1920, 1052.25},
+WindowMargins->{{2472, Automatic}, {Automatic, 0}},
+FrontEndVersion->"14.0 for Linux x86 (64-bit) (December 12, 2023)",
+StyleDefinitions->"Default.nb",
+ExpressionUUID->"976d0ca1-86e4-4ba2-a076-fc5687fe8df2"
+]
+(* End of Notebook Content *)
+
+(* Internal cache information *)
+(*CellTagsOutline
+CellTagsIndex->{}
+*)
+(*CellTagsIndex
+CellTagsIndex->{}
+*)
+(*NotebookFileOutline
+Notebook[{
+Cell[CellGroupData[{
+Cell[580, 22, 155, 2, 98, "Title",ExpressionUUID->"aecaf734-685e-49dd-b498-88810590e1cf"],
+Cell[738, 26, 301, 4, 35, "Text",ExpressionUUID->"64d3f5f5-1159-4771-9c7a-b66225405c30"],
+Cell[CellGroupData[{
+Cell[1064, 34, 79, 0, 67, "Section",ExpressionUUID->"6030daa0-3160-4ff5-a4ab-48dea7f9cdb1"],
+Cell[1146, 36, 248, 5, 30, "Input",ExpressionUUID->"a367c976-9f1c-49c3-a4d8-ba90e0939cb8"],
+Cell[1397, 43, 188, 3, 35, "Text",ExpressionUUID->"5c9d7ae5-9e3e-4f7c-a480-1a498baaf1a5"],
+Cell[1588, 48, 127, 1, 30, "Input",ExpressionUUID->"e3ecbcf9-726b-4249-ba00-291fd1e85c21"],
+Cell[1718, 51, 186, 3, 35, "Text",ExpressionUUID->"9206af87-9541-4f0e-ae3f-79de1135dbb1"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[1941, 59, 99, 0, 67, "Section",ExpressionUUID->"a2ab882c-a460-4098-9e1a-5e89f7190ba3"],
+Cell[2043, 61, 280, 4, 35, "Text",ExpressionUUID->"d24226b2-f1b0-4bb2-81c7-381bb2bef601"],
+Cell[2326, 67, 231, 6, 66, "Input",ExpressionUUID->"f03baf28-14a9-414e-ae74-f7395c17351f"],
+Cell[2560, 75, 123, 1, 30, "Input",ExpressionUUID->"aa5185da-deed-49d7-8218-2944b9893276"],
+Cell[2686, 78, 101, 1, 30, "Input",ExpressionUUID->"800d866f-2806-4d30-a598-de5c728e7d24"],
+Cell[2790, 81, 117, 1, 30, "Input",ExpressionUUID->"33421481-57a8-420b-a892-6d2ce087c20e"],
+Cell[2910, 84, 233, 3, 35, "Text",ExpressionUUID->"ee73fcb1-5af9-47a4-8208-96e873b728a6"],
+Cell[3146, 89, 233, 5, 48, "Input",ExpressionUUID->"17dcb6e9-acd5-4852-a464-a8c0a6729da0"],
+Cell[3382, 96, 182, 2, 29, "Input",ExpressionUUID->"d2e6a0c5-5505-4011-b511-bf0f72531b85"],
+Cell[3567, 100, 415, 10, 31, "Input",ExpressionUUID->"24f8801a-de1c-4edb-ac8e-d6d4459843c1"],
+Cell[3985, 112, 195, 3, 35, "Text",ExpressionUUID->"fc7cffa2-a405-4f9c-8063-1ba54ac3243d"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[4217, 120, 110, 0, 67, "Section",ExpressionUUID->"e3c13ec7-d490-47eb-9e8c-4de74e90089f"],
+Cell[4330, 122, 146, 2, 35, "Text",ExpressionUUID->"63fa8332-7ebc-4410-a6af-2dc996a561ef"],
+Cell[4479, 126, 231, 6, 66, "Input",ExpressionUUID->"c8087ace-13e5-449d-b1ac-86a7c870d278"],
+Cell[4713, 134, 124, 1, 30, "Input",ExpressionUUID->"17455c4f-3751-4454-9e9b-3dcd0ef455da"],
+Cell[4840, 137, 102, 1, 30, "Input",ExpressionUUID->"0896f5bf-12d8-4d36-b88a-5d7242625c76"],
+Cell[4945, 140, 118, 1, 30, "Input",ExpressionUUID->"c68f46d7-fa27-4e22-9ca6-300fa1f1f8df"],
+Cell[5066, 143, 233, 5, 48, "Input",ExpressionUUID->"dab18b25-c35d-408b-82d2-322bf79bbee7"],
+Cell[5302, 150, 163, 3, 35, "Text",ExpressionUUID->"c1718b18-f26c-46af-b572-6d4c4da45916"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[5502, 158, 103, 0, 67, "Section",ExpressionUUID->"8295681f-a262-4f70-bd1e-dd758642f49a"],
+Cell[5608, 160, 144, 2, 35, "Text",ExpressionUUID->"818f294b-7e9d-46c1-9fd9-2cf6da79a70d"],
+Cell[5755, 164, 199, 5, 66, "Input",ExpressionUUID->"8d00b324-dae5-46f7-837e-00caba32fd5c"],
+Cell[5957, 171, 124, 1, 30, "Input",ExpressionUUID->"be2e811b-d060-4a51-83f1-c8a693b001d8"],
+Cell[6084, 174, 102, 1, 30, "Input",ExpressionUUID->"93ffb22a-68c9-4ad7-ba77-f97b77b752c8"],
+Cell[6189, 177, 118, 1, 30, "Input",ExpressionUUID->"ce3fb7ea-197a-44c6-a578-93d20f879dd8"],
+Cell[6310, 180, 233, 5, 48, "Input",ExpressionUUID->"d1f87869-0848-4049-b4c8-81421a52bea7"],
+Cell[6546, 187, 174, 3, 35, "Text",ExpressionUUID->"02241079-db9f-43b5-b275-b00ccafd1e98"]
+}, Open  ]]
+}, Open  ]]
+}
+]
+*)
+
+(* End of internal cache information *)
+
